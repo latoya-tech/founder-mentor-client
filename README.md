@@ -1,5 +1,8 @@
 # Getting Started with Create React App
 
+npm start
+rails server -p 3001
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
