@@ -1,7 +1,6 @@
-# Getting Started with Create React App
 
-npm start
-rails server -p 3001
+ Test the API with curl
+ curl -X POST http://localhost:3001/api/ask -H "Content-Type: application/json" -d '{"question":"What are the lessons from Helena Rubinstein?"}'
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -10,6 +9,14 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 In the project directory, you can run:
 
 ### `npm start`
+
+In the Rails API, you can run:
+
+### `rails server -p 3001`
+
+Check the rails server using curl:
+
+### `curl -X POST http://localhost:3001/api/ask -H "Content-Type: application/json" -d '{"question":"What are the lessons from Helena Rubinstein?"}'`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
