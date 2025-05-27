@@ -16,9 +16,10 @@ function App() {
     setQuestion(newQuestion);
   };
 
+  // todo: add the jjj
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
-   const handleQuestionSubmit = async (e) => {
+  const handleQuestionSubmit = async (e) => {
     // Make sure e exists before trying to use it
     if (e) {
       e.preventDefault();
@@ -78,31 +79,31 @@ function App() {
 
   return (
     <div className="py-5">
-    <Container className="app-container">
-    <div className="app-header">
-    <h1 className="app-title">Founder Mentor</h1>
-    <p className="app-subtitle">
-    Ask questions and get advice from experienced founders
-    </p>
-    </div>
+      <Container className="app-container">
+        <div className="app-header">
+          <h1 className="app-title">Founder Mentor</h1>
+          <p className="app-subtitle">
+            Get advice from founders featured in <a href="https://thestrategyfiles.beehiiv.com"target="_blank" rel="noopener noreferrer">The Strategy Files Newsletter</a>!
+          </p>
+        </div>
 
-    <QuestionForm
-    question={question}
-    onQuestionChange={handleQuestionChange}
-    onSubmit={handleQuestionSubmit}
-    loading={loading}
-    />
+        <QuestionForm
+          question={question}
+          onQuestionChange={handleQuestionChange}
+          onSubmit={handleQuestionSubmit}
+          loading={loading}
+        />
 
-    {error && (
-      <div className="alert alert-danger mt-3">{error}</div>
-    )}
+        {error && (
+          <div className="alert alert-danger mt-3">{error}</div>
+        )}
 
-    {response && (
-      <ResponseDisplay response={response} />
-    )}
+        {response && (
+          <ResponseDisplay response={response} />
+        )}
 
-    <SampleQuestions onSampleQuestionClick={handleSampleQuestionClick} />
-    </Container>
+        <SampleQuestions onSampleQuestionClick={handleSampleQuestionClick} />
+      </Container>
     </div>
   );
 }
