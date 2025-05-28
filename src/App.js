@@ -1,111 +1,95 @@
-// src/App.js
-import React, { useState } from 'react'; // Make sure useEffect is imported
-import { Container } from 'react-bootstrap';
-import QuestionForm from './components/QuestionForm';
-import ResponseDisplay from './components/ResponseDisplay';
-import SampleQuestions from './components/SampleQuestions';
-import './App.css';
+import React, { useState } from 'react';
+import { Container, Form, Button, ListGroup, Spinner, Alert } from 'react-bootstrap';
 
-function App() {
+const Chat = ({ apiUrl }) => {
   const [question, setQuestion] = useState('');
-  const [response, setResponse] = useState(null);
+  const [chatLog, setChatLog] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
 
-  const handleQuestionChange = (newQuestion) => {
-    setQuestion(newQuestion);
-  };
+  const API_URL = 'http://localhost:3001';
 
-  // todo: add the jjj
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!question.trim()) return;
 
-  const handleQuestionSubmit = async (e) => {
-    // Make sure e exists before trying to use it
-    if (e) {
-      e.preventDefault();
-    }
-
-    // Validate input
-    if (!question.trim()) {
-      setError('Please enter a question');
-      return;
-    }
-
-    // Set loading state
     setLoading(true);
     setError(null);
 
     try {
-      console.log('Sending request to:', `${API_URL}/api/ask`);
-      console.log('Question:', question);
-
       const response = await fetch(`${API_URL}/api/ask`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question }),
       });
-
-      console.log('Response status:', response.status);
-
-      // Check if the response is ok
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(
-          errorData?.error || `Server responded with status: ${response.status}`
-        );
+        throw new Error('Network response was not ok');
       }
-
-      // Parse the JSON response
       const data = await response.json();
-      console.log('Response data:', data);
-
-      // Update the UI with the answer
-      setResponse(data.answer);
-
-    } catch (error) {
-      console.error('Error submitting question:', error);
-      setError(error.message || 'An unexpected error occurred');
+      setChatLog((prev) => [...prev, { question, answer: data.answer }]);
+      setQuestion('');
+    } catch (err) {
+      setError(err.message || 'Something went wrong');
     } finally {
-      // Always set loading to false when done
       setLoading(false);
     }
   };
 
-  const handleSampleQuestionClick = (sampleQuestion) => {
-    setQuestion(sampleQuestion);
-  };
-
   return (
-    <div className="py-5">
-      <Container className="app-container">
-        <div className="app-header">
-          <h1 className="app-title">Founder Mentor</h1>
-          <p className="app-subtitle">
-            Get advice from founders featured in <a href="https://thestrategyfiles.beehiiv.com"target="_blank" rel="noopener noreferrer">The Strategy Files Newsletter</a>!
-          </p>
-        </div>
+    <Container style={{ maxWidth: '600px', marginTop: '2rem' }}>
+      <h3 className="mb-4">Chat with AI</h3>
 
-        <QuestionForm
-          question={question}
-          onQuestionChange={handleQuestionChange}
-          onSubmit={handleQuestionSubmit}
-          loading={loading}
-        />
+      <Form onSubmit={handleSubmit}>
+        <Form.Group controlId="questionInput">
+          <Form.Control
+            type="text"
+            placeholder="Ask a question..."
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            disabled={loading}
+          />
+        </Form.Group>
+        <Button
+          variant="primary"
+          type="submit"
+          className="mt-2"
+          disabled={loading || !question.trim()}
+        >
+          {loading ? (
+            <>
+              <Spinner
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+                className="me-2"
+              />
+              Sending...
+            </>
+          ) : (
+            'Send'
+          )}
+        </Button>
+      </Form>
 
-        {error && (
-          <div className="alert alert-danger mt-3">{error}</div>
-        )}
+      {error && (
+        <Alert variant="danger" className="mt-3">
+          {error}
+        </Alert>
+      )}
 
-        {response && (
-          <ResponseDisplay response={response} />
-        )}
-
-        <SampleQuestions onSampleQuestionClick={handleSampleQuestionClick} />
-      </Container>
-    </div>
+      <ListGroup className="mt-4">
+        {chatLog.map(({ question, answer }, idx) => (
+          <ListGroup.Item key={idx}>
+            <strong>You:</strong> {question}
+            <br />
+            <strong>AI:</strong> {answer}
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+    </Container>
   );
-}
+};
 
-export default App;
+export default Chat;
+
